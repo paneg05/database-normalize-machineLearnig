@@ -14,6 +14,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import train_test_split
 
 baseCensus = pd.read_csv('./database/census.csv')
 base_credit = pd.read_csv('./database/credit_data.csv')
@@ -50,11 +51,23 @@ xCensus[:,13] = labelEncoderCountry.fit_transform(xCensus[:,13])
 oneHotEncoderCensus = ColumnTransformer(transformers=[('OneHot', OneHotEncoder(), [1,3,5,6,7,8,9,13])], remainder='passthrough')
 xCensus = oneHotEncoderCensus.fit_transform(xCensus).toarray()
 
-print(xCensus)
 
-print(yCensus)
-print(np.unique(baseCensus['income'], return_counts=True))
+##padronização
+scalerCensus = StandardScaler()
+xCensus = scalerCensus.fit_transform(xCensus)
 
+
+##definicao das bases de dados de treinamento e de teste
+xCensusTreinamento, xCensusTeste, yCensusTreinamento, yCensusTeste= train_test_split(xCensus, yCensus, test_size=0.15, random_state=0)
+
+
+
+
+
+##print(xCensus)
+
+##print(yCensus)
+##print(np.unique(baseCensus['income'], return_counts=True))
 
 
 
@@ -104,6 +117,10 @@ scalerCredit = StandardScaler()
 xCredit = scalerCredit.fit_transform(xCredit)
 
 
+xCreditTreinamento, xCreditTeste, yCreditTreinamento, yCreditTeste = train_test_split(xCredit, yCredit, test_size=0.25, random_state=0)
+
+print(xCreditTreinamento)
+print(yCreditTreinamento)
 
 
 c=base_credit.iloc[:,4]
