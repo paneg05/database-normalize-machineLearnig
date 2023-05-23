@@ -12,7 +12,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
-
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
 
 baseCensus = pd.read_csv('./database/census.csv')
 base_credit = pd.read_csv('./database/credit_data.csv')
@@ -26,7 +27,7 @@ xCensus = baseCensus.iloc[:, 0:14].values
 
 yCensus = baseCensus.iloc[:, 14].values
 
-
+##transformação em numero inteiro simples
 labelEncoderWorkclass = LabelEncoder()
 labelEncoderEducation = LabelEncoder()
 labelEncoderMaritial = LabelEncoder()
@@ -45,8 +46,11 @@ xCensus[:,8] = labelEncoderRace.fit_transform(xCensus[:,8])
 xCensus[:,9] = labelEncoderSex.fit_transform(xCensus[:,9])
 xCensus[:,13] = labelEncoderCountry.fit_transform(xCensus[:,13])
 
+##transformação em binario
+oneHotEncoderCensus = ColumnTransformer(transformers=[('OneHot', OneHotEncoder(), [1,3,5,6,7,8,9,13])], remainder='passthrough')
+xCensus = oneHotEncoderCensus.fit_transform(xCensus).toarray()
 
-
+print(xCensus)
 
 print(yCensus)
 print(np.unique(baseCensus['income'], return_counts=True))
