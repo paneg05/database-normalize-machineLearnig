@@ -4,21 +4,79 @@ Created on Tue May 16 23:40:18 2023
 
 @author: Alunc
 """
-import plotly.graph_objects as go
 
+import plotly.express as px
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-import plotly.express as px
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import LabelEncoder
 
 
-
-
-
-base_census = pd.read_csv('./database/census.csv')
+baseCensus = pd.read_csv('./database/census.csv')
 base_credit = pd.read_csv('./database/credit_data.csv')
+
+## base de dados censo
+
+
+
+
+xCensus = baseCensus.iloc[:, 0:14].values
+
+yCensus = baseCensus.iloc[:, 14].values
+
+
+labelEncoderWorkclass = LabelEncoder()
+labelEncoderEducation = LabelEncoder()
+labelEncoderMaritial = LabelEncoder()
+labelEncoderOcupation = LabelEncoder()
+labelEncoderRelationShip = LabelEncoder()
+labelEncoderRace = LabelEncoder()
+labelEncoderSex = LabelEncoder()
+labelEncoderCountry = LabelEncoder()
+
+xCensus[:,1] = labelEncoderWorkclass.fit_transform(xCensus[:,1])
+xCensus[:,3] = labelEncoderEducation.fit_transform(xCensus[:,3])
+xCensus[:,5] = labelEncoderMaritial.fit_transform(xCensus[:,5])
+xCensus[:,6] = labelEncoderOcupation.fit_transform(xCensus[:,6])
+xCensus[:,7] = labelEncoderRelationShip.fit_transform(xCensus[:,7])
+xCensus[:,8] = labelEncoderRace.fit_transform(xCensus[:,8])
+xCensus[:,9] = labelEncoderSex.fit_transform(xCensus[:,9])
+xCensus[:,13] = labelEncoderCountry.fit_transform(xCensus[:,13])
+
+
+
+
+print(yCensus)
+print(np.unique(baseCensus['income'], return_counts=True))
+
+
+
+
+fig, ax1 = plt.subplots()
+sns.countplot(x=baseCensus['income'], ax=ax1)
+
+
+fig, ax2 = plt.subplots()
+ax2.hist(x=baseCensus['age'])
+
+
+fig, ax3 = plt.subplots()
+ax3.hist(x=baseCensus['education-num'])
+
+fig, ax4 = plt.subplots()
+ax4.hist(x=baseCensus['hour-per-week'])
+
+grafico = px.treemap(baseCensus, path=['workclass', 'age'])
+grafico.show()
+
+grafico = px.parallel_categories(baseCensus,dimensions=['occupation', 'relationship'])
+grafico.show()
+
+
+
+## base de dados bancarios
 
 
 ## baseCredit = base_credit.drop(base_credit[base_credit['age']<0].index)
@@ -36,17 +94,12 @@ xCredit = base_credit.iloc[:, 1:4].values
 
 yCredit = base_credit.iloc[:, 4].values
 
-print(xCredit[:,0].min(), xCredit[:,0].max())
-print(xCredit[:,1].min(), xCredit[:,1].max())
-print(xCredit[:,2].min(), xCredit[:,2].max())
 
 ##normalização
 scalerCredit = StandardScaler()
 xCredit = scalerCredit.fit_transform(xCredit)
 
-print(xCredit[:,0].min(), xCredit[:,0].max())
-print(xCredit[:,1].min(), xCredit[:,1].max())
-print(xCredit[:,2].min(), xCredit[:,2].max())
+
 
 
 c=base_credit.iloc[:,4]
@@ -80,19 +133,3 @@ plt.show()
 
 df = pd.DataFrame(base_credit, columns=['income','loan','age',])
 pd.plotting.scatter_matrix(df, alpha=0.2,diagonal='kde', c=color, s=50)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
